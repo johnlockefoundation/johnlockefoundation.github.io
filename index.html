@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>John Locke Foundation — Projects</title>
+  <meta name="description" content="Interactive projects from the John Locke Foundation.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%23f6f1e7'/><rect x='5' y='5' width='54' height='54' fill='none' stroke='%23211d16'/><text x='32' y='43' font-family='Georgia,serif' font-size='28' text-anchor='middle' fill='%23211d16'>JL</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --paper:#f6f1e7;
+      --paper-deep:#ece4d1;
+      --ink:#211d16;
+      --ink-soft:#6f6656;
+      --rule:#d8cdb6;
+      --accent:#8a2b1d;
+      --serif:"Newsreader",Georgia,"Times New Roman",serif;
+      --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      display:flex;
+      flex-direction:column;
+      min-height:100%;
+      background:var(--paper);
+      color:var(--ink);
+      font-family:var(--serif);
+      font-size:16px;
+      line-height:1.5;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+    ::selection{background:#e6dcc2}
+    a{color:inherit;text-decoration:none}
+    :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+    .container{max-width:980px;margin:0 auto;padding:0 clamp(1.1rem,4vw,2.5rem);width:100%}
+    .masthead{padding:clamp(2.6rem,6vw,4.5rem) 0 0;text-align:center}
+    .masthead-title{
+      margin:0;
+      font-weight:500;
+      font-size:clamp(2.1rem,5vw,3.4rem);
+      line-height:1.05;
+      letter-spacing:-.01em;
+    }
+    .masthead-ornament{
+      margin:clamp(1rem,2.4vw,1.4rem) auto 0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:.85rem;
+      max-width:340px;
+    }
+    .masthead-ornament::before,
+    .masthead-ornament::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--rule))}
+    .masthead-ornament::after{background:linear-gradient(90deg,var(--rule),transparent)}
+    .masthead-ornament .diamond{flex:none;width:.4em;height:.4em;border:1px solid var(--accent);transform:rotate(45deg)}
+    .standfirst{margin:1.1rem auto 0;max-width:52ch;font-style:italic;font-size:1.1rem;color:var(--ink-soft)}
+    .projects{
+      margin-top:clamp(1.8rem,4vw,2.6rem);
+      border-top:3px solid var(--ink);
+      padding:clamp(1.4rem,3vw,2rem) 0 0;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:1.4rem;
+    }
+    .project{
+      display:flex;
+      flex-direction:column;
+      min-height:100%;
+      border-top:1px solid var(--rule);
+      padding-top:1.1rem;
+    }
+    .project:hover{border-top-color:var(--accent)}
+    .project-kind{font-family:var(--sans);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+    .project-title{margin:.5rem 0 .55rem;font-weight:500;font-size:1.35rem;line-height:1.15;letter-spacing:-.005em}
+    .project-title a:hover{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:var(--accent)}
+    .project-desc{margin:0;font-size:.98rem;line-height:1.55;color:var(--ink-soft)}
+    .project-more{margin-top:auto;padding-top:1rem;font-family:var(--sans);font-size:.68rem;letter-spacing:.08em;color:var(--ink-soft)}
+    .project-more:hover{color:var(--accent)}
+    .colophon{margin-top:auto;padding:clamp(2.4rem,5vw,3.4rem) 0 2.8rem;text-align:center}
+    .colophon .fine{margin:0;font-family:var(--sans);font-size:.72rem;letter-spacing:.04em;color:var(--ink-soft)}
+    .colophon a{text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px}
+    .colophon a:hover{text-decoration-color:var(--accent)}
+    @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+  </style>
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="container">
+      <h1 class="masthead-title">The John Locke Foundation</h1>
+      <div class="masthead-ornament" aria-hidden="true"><span class="diamond"></span></div>
+      <p class="standfirst">Interactive projects from JLF's data and technology team.</p>
+    </div>
+  </header>
+
+  <div class="container" style="flex:none">
+    <section class="projects" aria-label="Projects">
+
+      <article class="project">
+        <span class="project-kind">Data &middot; Election</span>
+        <h2 class="project-title"><a href="/nc26/">NC Race Signals — 2026</a></h2>
+        <p class="project-desc">Midterm previews for North Carolina&rsquo;s federal races — signals from the primaries, polls, and turnout.</p>
+        <a class="project-more" href="/nc26/">Open project →</a>
+      </article>
+
+      <article class="project">
+        <span class="project-kind">Data &middot; Policy</span>
+        <h2 class="project-title"><a href="/property-tax-demo/">NC Property Tax — Understanding HB 1089</a></h2>
+        <p class="project-desc">An interactive explainer of property-tax revaluation and the effects of Senate Bill HB 1089.</p>
+        <a class="project-more" href="/property-tax-demo/">Open project →</a>
+      </article>
+
+      <article class="project">
+        <span class="project-kind">Editorial</span>
+        <h2 class="project-title"><a href="/jlf-reads/">Reading &amp; Watching</a></h2>
+        <p class="project-desc">Books, films, articles, and podcasts recommended by JLF staff.</p>
+        <a class="project-more" href="/jlf-reads/">Open project →</a>
+      </article>
+
+    </section>
+  </div>
+
+  <footer class="colophon">
+    <div class="container">
+      <p class="fine">John Locke Foundation &middot; <a href="https://www.johnlocke.org/">johnlocke.org</a></p>
+    </div>
+  </footer>
+
+</body>
+</html>
