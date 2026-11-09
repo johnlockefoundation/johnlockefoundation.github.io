@@ -1,0 +1,167 @@
+/* nc26 design language, light mode. Same tokens and components as
+   carolina_elections/frontend/src/styles.css, with the dark slate palette
+   inverted: white cards on a slate-50 ground, slate-900 ink, blue accent.
+   Fonts are the Locke standard: Barlow Condensed for display, Mulish standing
+   in for the licensed Effra for body. */
+:root{
+  --ink:#0f172a;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --input:#f1f5f9;
+  --d:#2563eb;
+  --r:#dc2626;
+  --accent:#2563eb;
+  --shadow:0 1px 2px rgba(15,23,42,.05),0 8px 24px rgba(15,23,42,.07);
+  --font-body:'Effra','Mulish',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --font-display:'Barlow Condensed','Mulish',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.app{max-width:1440px;margin:0 auto;padding:18px 22px 40px;position:relative}
+
+/* Locke wordmark, top-right, as on nc26. The only brand asset available is
+   the white PNG; invert(1) renders it dark on this light page. */
+.corner-logo-link{position:absolute;top:10px;right:7px;display:block}
+.corner-logo{height:26px;width:auto;max-width:220px;display:block;filter:invert(1)}
+.corner-logo-link:hover{opacity:.82}
+@media (max-width:1100px){.corner-logo-link{display:none}}
+
+/* Topbar */
+.topbar{display:flex;align-items:center;justify-content:center;padding:8px 2px 6px}
+.brand-link{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:inherit}
+.brand-title{
+  margin:0;font-family:var(--font-display);font-weight:700;text-transform:uppercase;
+  font-size:clamp(30px,4.6vw,46px);line-height:1.05;letter-spacing:.01em;color:var(--ink);
+}
+.brand-byline{font-size:9.5px;font-weight:600;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;margin-top:6px}
+.brand-byline em{font-style:italic;text-transform:lowercase;font-weight:400}
+.brand-link:hover .brand-byline{color:var(--accent)}
+.standfirst{margin:14px auto 0;max-width:66ch;text-align:center;font-size:14px;color:var(--muted)}
+.updated{margin:10px 0 0;text-align:center;font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+/* Section headings: small-caps display type, no rules. */
+.section-head{margin-top:26px;margin-bottom:12px}
+.section-head h2{margin:0;font-family:var(--font-display);font-weight:700;font-size:22px;letter-spacing:.04em;text-transform:uppercase}
+.section-sub{margin:4px 0 0;font-size:13px;color:var(--muted);max-width:90ch}
+
+/* Panels: the nc26 card. */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px}
+
+/* Stretch so the county card and the map panel are the same height. The
+   legend is pinned to the bottom of the map panel to absorb the slack. */
+.map-grid{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:18px;align-items:stretch}
+@media (max-width:1080px){.map-grid{grid-template-columns:1fr}}
+.map-wrap{position:relative;display:flex;flex-direction:column}
+#map svg{width:100%;height:auto;display:block}
+.county-path{stroke:#ffffff;stroke-width:.6;cursor:pointer;transition:opacity .15s}
+.county-path:hover{stroke:var(--ink);stroke-width:1.2}
+.county-path.selected{stroke:var(--ink);stroke-width:1.6}
+#map.has-selection .county-path:not(.selected):not(:hover){opacity:.75}
+
+.legend{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:10px;flex-wrap:wrap;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--muted)}
+.legend .swatches{display:flex;height:10px;flex:1;min-width:160px;max-width:340px;border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.legend .swatches span{flex:1}
+.legend-caption{flex-basis:100%;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase}
+
+.tooltip{
+  position:absolute;pointer-events:none;background:#0f172a;color:#e2e8f0;
+  font-size:12px;line-height:1.45;padding:8px 11px;border-radius:9px;
+  max-width:250px;z-index:5;display:none;box-shadow:var(--shadow);
+}
+.tooltip strong{display:block;font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:.03em}
+
+/* County card */
+.county-card h3{margin:0;font-family:var(--font-display);font-weight:700;font-size:26px;letter-spacing:.02em;text-transform:uppercase}
+.card-dates{display:flex;gap:10px;margin:12px 0 14px}
+.card-dates label{display:flex;flex-direction:column;gap:4px;flex:1}
+.card-dates label,.table-controls label{
+  font-family:var(--font-display);font-size:10.5px;letter-spacing:.14em;font-weight:700;
+  text-transform:uppercase;color:var(--muted);
+}
+select,input[type="search"]{
+  font-family:var(--font-body);font-size:13px;color:var(--ink);
+  background:var(--input);border:1px solid var(--line);border-radius:9px;
+  padding:7px 10px;max-width:100%;
+}
+select:focus,input[type="search"]:focus{outline:2px solid var(--accent);outline-offset:1px}
+input[type="search"]::placeholder{color:#94a3b8}
+
+/* Card breakdown toggle, in the nc26 toggle style. */
+.toggle-bar{display:inline-flex;background:var(--input);border-radius:12px;padding:4px;gap:4px;margin:0 0 12px;flex-wrap:wrap}
+.toggle{
+  border:0;background:transparent;border-radius:9px;padding:7px 14px;cursor:pointer;
+  font-family:var(--font-display);font-weight:700;font-size:13px;letter-spacing:.04em;color:var(--muted);
+}
+.toggle.active{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(15,23,42,.12)}
+.toggle:hover:not(.active){color:var(--accent)}
+
+.stat-rows{width:100%;border-collapse:collapse;font-size:13px}
+.stat-rows th,.stat-rows td{padding:6px 4px;text-align:right;border-bottom:1px solid var(--input);white-space:nowrap}
+.stat-rows th:first-child,.stat-rows td:first-child{text-align:left}
+.stat-rows thead th{
+  font-family:var(--font-display);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:700;color:var(--muted);border-bottom:1px solid var(--line);
+}
+.stat-rows .total-row td{border-top:1px solid var(--line);font-weight:700}
+.pos{color:var(--d)}
+.neg{color:var(--r)}
+.margin-line{font-size:13px;margin:10px 0 0;color:var(--muted)}
+.margin-line strong{color:var(--ink)}
+
+/* Date-range presets: chips in the nc26 toggle style. */
+.preset-bar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.preset{
+  font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:var(--card);
+  color:var(--muted);cursor:pointer;
+}
+.preset:hover{border-color:var(--accent);color:var(--accent)}
+.preset.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.preset:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Table */
+.table-controls{display:flex;flex-wrap:wrap;gap:16px;margin:0 0 14px;align-items:end}
+.table-controls label{display:flex;flex-direction:column;gap:4px}
+.search-label{margin-left:auto}
+@media (max-width:640px){.search-label{margin-left:0}}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;max-height:560px;overflow-y:auto;background:var(--card)}
+#county-table{width:100%;border-collapse:collapse;font-size:13px}
+#county-table th,#county-table td{padding:7px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--input)}
+#county-table th:first-child,#county-table td:first-child{text-align:left}
+#county-table thead th{
+  position:sticky;top:0;background:var(--input);cursor:pointer;user-select:none;
+  font-family:var(--font-display);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--ink);
+}
+#county-table thead th:hover{color:var(--accent)}
+#county-table tbody tr{cursor:pointer}
+#county-table tbody tr:hover{background:#f8fafc}
+#county-table tbody tr.selected{background:#eff6ff}
+#county-table tr.statewide td{font-weight:700;background:var(--input)}
+
+.methodology{margin-top:28px;max-width:80ch}
+.methodology h2{margin:0 0 6px;font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:.06em;text-transform:uppercase}
+.methodology p{font-size:13px;color:var(--muted)}
+.loading{text-align:center;padding:40px 0;font-style:italic;color:var(--muted)}
+.footer{margin-top:30px;border-top:1px solid var(--line);padding-top:14px;font-size:12px;color:var(--muted)}
+.footer a{color:var(--muted);text-decoration:none}
+.footer a:hover{color:var(--accent)}
+
+/* Early-voting page specifics (shared base copied from /registrations). */
+.map-grid{margin-top:26px}
+.panel-title{margin:0 0 10px;font-family:var(--font-display);font-weight:700;font-size:20px;letter-spacing:.04em;text-transform:uppercase}
+.map-wrap .section-sub{margin-bottom:10px;font-size:12px}
+.chart-panel .section-sub{font-size:13px}
+.chart-panel .section-sub strong{color:var(--ink)}
+.chart-controls{display:flex;gap:10px;margin:12px 0 6px}
+.chart-controls label{display:flex;flex-direction:column;gap:4px;flex:1;
+  font-family:var(--font-display);font-size:10.5px;letter-spacing:.14em;font-weight:700;text-transform:uppercase;color:var(--muted)}
+.axis{font-family:var(--font-body);font-size:10px;fill:#64748b}
+.axis-caption{font-size:10.5px;letter-spacing:.04em}
+.chart-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:12px;color:var(--muted)}
+.chart-key{display:inline-flex;align-items:center;gap:6px}
+.line-swatch{display:inline-block;width:18px;border-top:3px solid}
+.line-swatch.dashed{border-top-style:dashed;border-top-width:2px}

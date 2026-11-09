@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NC Early Voting — John Locke Foundation</title>
+  <meta name="description" content="Early and absentee ballots in North Carolina: the partisan split by district on the map, and the cumulative early-vote trajectory against past general elections.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%23f8fafc'/><rect x='5' y='5' width='54' height='54' fill='none' stroke='%230f172a'/><text x='32' y='43' font-family='Georgia,serif' font-size='28' text-anchor='middle' fill='%230f172a'>JL</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Mulish:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <a href="https://www.johnlocke.org/" class="corner-logo-link" aria-label="John Locke Foundation">
+      <img src="assets/locke-logo-white.png" class="corner-logo" alt="John Locke Foundation" width="1200" height="346">
+    </a>
+    <header class="topbar">
+      <a class="brand-link" href="../">
+        <h1 class="brand-title">NC Early Voting</h1>
+      </a>
+    </header>
+    <p class="updated" id="updated-line"></p>
+
+    <main id="app" hidden>
+      <div class="map-grid">
+        <section class="panel map-wrap" aria-labelledby="map-title">
+          <h2 id="map-title" class="panel-title">Ballots by district</h2>
+          <div class="toggle-bar" id="chamber-toggles" role="tablist" aria-label="Chamber"></div>
+          <p class="section-sub" id="map-sub"></p>
+          <div id="map" role="img" aria-label="Map of North Carolina districts colored by the partisan split of early ballots"></div>
+          <div class="legend" id="legend"></div>
+        </section>
+
+        <section class="panel chart-panel" aria-labelledby="chart-title">
+          <h2 id="chart-title" class="panel-title">Early vote trajectory</h2>
+          <p class="section-sub" id="chart-sub"></p>
+          <div class="chart-controls">
+            <label>Compare with <select id="compare-a"></select></label>
+            <label>And <select id="compare-b"></select></label>
+          </div>
+          <div id="chart"></div>
+          <div class="chart-legend" id="chart-legend"></div>
+        </section>
+      </div>
+
+      <section class="methodology">
+        <h2>Methodology</h2>
+        <p>Figures come from the absentee files of the Carolina Elections database (carolinaelections.com), one row per ballot with the date the ballot activity was recorded. The map shows each district’s Democratic-minus-Republican share of ballots recorded so far in the 2026 general election, in percentage points; minor parties are counted in totals but not in the party split. Chamber toggles switch between U.S. House, state House, state Senate and the statewide U.S. Senate view.</p>
+        <p>The trajectory chart cumulates ballots by day, aligned across elections by days before election day. The current election is split by party; comparison elections are drawn as single dashed totals, which include minor parties. The 2016 absentee file is empty and is not offered. A recorded ballot is not necessarily a returned or counted vote, and the parties do not return ballots at equal rates — the partisan split is not a forecast.</p>
+      </section>
+    </main>
+
+    <p id="loading" class="loading">Loading early-vote data…</p>
+    <footer class="footer"><a href="../">John Locke Foundation</a> · Interactive projects</footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
