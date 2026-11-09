@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NC Voter Registration by County — John Locke Foundation</title>
+  <meta name="description" content="Weekly voter registration in all 100 North Carolina counties: partisan change over the last month on the map, exact figures between any two dates, and partisan and racial breakdowns per county.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%23f6f1e7'/><rect x='5' y='5' width='54' height='54' fill='none' stroke='%23211d16'/><text x='32' y='43' font-family='Georgia,serif' font-size='28' text-anchor='middle' fill='%23211d16'>JL</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header class="masthead">
+      <p class="project-kind">John Locke Foundation · Data</p>
+      <h1 class="masthead-title">North Carolina Voter Registration</h1>
+      <div class="masthead-ornament" aria-hidden="true"><span class="diamond"></span></div>
+      <p class="standfirst">Weekly registration in all 100 counties. The map shows the partisan shift over the last month; select a county for exact figures between any two dates.</p>
+      <p class="updated" id="updated-line"></p>
+    </header>
+
+    <main id="app" hidden>
+      <section class="map-section" aria-labelledby="map-title">
+        <div class="section-head">
+          <h2 id="map-title">The last month, county by county</h2>
+          <p class="section-sub" id="map-sub"></p>
+        </div>
+        <div class="map-grid">
+          <div class="map-wrap">
+            <div id="map" role="img" aria-label="Map of North Carolina counties colored by partisan registration change over the last month"></div>
+            <div class="legend" id="legend"></div>
+          </div>
+          <aside class="county-card" id="county-card" aria-labelledby="card-county-name"></aside>
+        </div>
+      </section>
+
+      <section class="table-section" aria-labelledby="table-title">
+        <div class="section-head">
+          <h2 id="table-title">Every county, between any two weeks</h2>
+          <p class="section-sub">Choose two snapshot dates. Click a column heading to sort; click a row to open the county above.</p>
+        </div>
+        <div class="table-controls">
+          <label>From <select id="table-from"></select></label>
+          <label>To <select id="table-to"></select></label>
+          <label class="search-label">Find a county <input type="search" id="table-search" placeholder="e.g. Wake"></label>
+        </div>
+        <div class="table-wrap">
+          <table id="county-table">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="methodology">
+        <h2>Methodology</h2>
+        <p>Figures are weekly snapshots of North Carolina voter registration from the Carolina Elections database (carolinaelections.com), one row per county per week since January 2008. “Other parties” combines the Green, Constitution, Libertarian, No Labels, Justice for All and We the People registrations. Racial categories are those published with the registration file: White, Black and Other.</p>
+        <p>The map is always the same fixed comparison: the change in the Democratic-minus-Republican share of each county’s registered voters between the latest weekly snapshot and the snapshot four weeks earlier, expressed in percentage points. The date selectors in the county card and the table change only those panels, never the map. Registration is not a vote, and shifts in registration do not by themselves forecast an election.</p>
+      </section>
+    </main>
+
+    <p id="loading" class="loading">Loading registration data…</p>
+    <footer class="footer"><a href="../">John Locke Foundation</a> · Interactive projects</footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
