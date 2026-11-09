@@ -44,16 +44,18 @@ a{color:var(--accent)}
 /* Panels: the nc26 card. */
 .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px}
 
-.map-grid{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:18px;align-items:start}
+/* Stretch so the county card and the map panel are the same height. The
+   legend is pinned to the bottom of the map panel to absorb the slack. */
+.map-grid{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:18px;align-items:stretch}
 @media (max-width:1080px){.map-grid{grid-template-columns:1fr}}
-.map-wrap{position:relative}
+.map-wrap{position:relative;display:flex;flex-direction:column}
 #map svg{width:100%;height:auto;display:block}
 .county-path{stroke:#ffffff;stroke-width:.6;cursor:pointer;transition:opacity .15s}
 .county-path:hover{stroke:var(--ink);stroke-width:1.2}
 .county-path.selected{stroke:var(--ink);stroke-width:1.6}
 #map.has-selection .county-path:not(.selected):not(:hover){opacity:.75}
 
-.legend{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--muted)}
+.legend{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:10px;flex-wrap:wrap;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--muted)}
 .legend .swatches{display:flex;height:10px;flex:1;min-width:160px;max-width:340px;border:1px solid var(--line);border-radius:5px;overflow:hidden}
 .legend .swatches span{flex:1}
 .legend-caption{flex-basis:100%;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase}
@@ -102,17 +104,6 @@ input[type="search"]::placeholder{color:#94a3b8}
 .neg{color:var(--r)}
 .margin-line{font-size:13px;margin:10px 0 0;color:var(--muted)}
 .margin-line strong{color:var(--ink)}
-
-.pies{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
-.pies.single{grid-template-columns:1fr}
-@media (max-width:420px){.pies{grid-template-columns:1fr}}
-.pie h4{margin:0 0 6px;font-family:var(--font-display);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--muted);text-align:center}
-.pie svg{width:100%;max-width:170px;height:auto;display:block;margin:0 auto}
-.pie-legend{list-style:none;margin:8px 0 0;padding:0;font-size:12px}
-.pie-legend li{display:flex;align-items:center;gap:6px;padding:2px 0}
-.pie-legend .dot{width:9px;height:9px;flex:none;border-radius:2px}
-.pie-legend .pct{margin-left:auto;color:var(--muted)}
-.pie-note{font-size:11px;color:var(--muted);text-align:center;margin:8px 0 0}
 
 /* Date-range presets: chips in the nc26 toggle style. */
 .preset-bar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}

@@ -12,10 +12,7 @@
   'use strict';
 
   var FIELDS = ['dem', 'rep', 'unaff', 'other', 'white', 'black', 'otherRace', 'total'];
-  var COLORS = {
-    dem: '#2563eb', rep: '#dc2626', unaff: '#94a3b8', other: '#f59e0b',
-    white: '#94a3b8', black: '#1e293b', otherRace: '#fbbf24',
-  };
+  var COLORS = { dem: '#2563eb', rep: '#dc2626' };
   var PARTY_ROWS = [
     { key: 'dem', label: 'Democratic' },
     { key: 'rep', label: 'Republican' },
@@ -268,19 +265,12 @@
       + '<button type="button" class="toggle' + (!isParty ? ' active' : '') + '" data-view="race" role="tab" aria-selected="' + !isParty + '">Racial demographics</button>'
       + '</div>';
 
-    // The partisan view keeps its donut; the racial view is the same
-    // From/To/Change table only (the standalone race pie was dropped).
+    // Both views are the From/To/Change table; the partisan view adds the
+    // D−R share line. Pie charts were dropped from the card entirely.
     var below = isParty
       ? '<p class="margin-line">Democratic−Republican share: <strong>' + mA.toFixed(1) + '%</strong> → '
         + '<strong>' + mB.toFixed(1) + '%</strong> '
         + '(<span class="' + (dm >= 0 ? 'pos' : 'neg') + '">' + fmtPp(dm) + '</span>)</p>'
-        + '<div class="pies single">'
-        + pieBlock('Partisan split', [
-          { key: 'dem', label: 'Democratic' }, { key: 'rep', label: 'Republican' },
-          { key: 'unaff', label: 'Unaffiliated' }, { key: 'other', label: 'Other parties' },
-        ], county, to)
-        + '</div>'
-        + '<p class="pie-note">Breakdown as of ' + fmtDate(state.data.weeks[to]) + '</p>'
       : '';
 
     card.innerHTML = '<h3 id="card-county-name">' + esc(county.name) + '</h3>'
@@ -315,45 +305,6 @@
       if (state.cardTo < state.cardFrom) state.cardFrom = state.cardTo;
       renderCard();
     });
-  }
-
-  function pieBlock(title, slices, county, weekIdx) {
-    var values = slices.map(function (s) { return val(county, s.key, weekIdx); });
-    var sum = values.reduce(function (a, b) { return a + b; }, 0);
-    var svg = donut(slices.map(function (s, i) {
-      return { label: s.label, value: values[i], color: COLORS[s.key] };
-    }));
-    var legend = slices.map(function (s, i) {
-      var pct = sum ? (values[i] / sum * 100).toFixed(1) + '%' : '—';
-      return '<li><span class="dot" style="background:' + COLORS[s.key] + '"></span>'
-        + esc(s.label) + '<span class="pct">' + pct + '</span></li>';
-    }).join('');
-    return '<div class="pie"><h4>' + title + '</h4>' + svg
-      + '<ul class="pie-legend">' + legend + '</ul></div>';
-  }
-
-  function donut(slices) {
-    var total = slices.reduce(function (a, s) { return a + s.value; }, 0);
-    if (!total) return '<svg viewBox="0 0 42 42"></svg>';
-    var angle = -Math.PI / 2;
-    var paths = slices.map(function (s) {
-      var frac = s.value / total;
-      if (frac <= 0) return '';
-      var a0 = angle, a1 = angle + frac * Math.PI * 2;
-      angle = a1;
-      // Full-circle slice needs two arcs; SVG cannot draw 360° in one command.
-      if (frac >= 0.99999) {
-        return '<circle cx="21" cy="21" r="15.915" fill="none" stroke="' + s.color + '" stroke-width="8"></circle>';
-      }
-      var large = frac > 0.5 ? 1 : 0;
-      var r = 15.915;
-      var x0 = 21 + r * Math.cos(a0), y0 = 21 + r * Math.sin(a0);
-      var x1 = 21 + r * Math.cos(a1), y1 = 21 + r * Math.sin(a1);
-      return '<path d="M ' + x0.toFixed(3) + ' ' + y0.toFixed(3)
-        + ' A ' + r + ' ' + r + ' 0 ' + large + ' 1 ' + x1.toFixed(3) + ' ' + y1.toFixed(3)
-        + '" fill="none" stroke="' + s.color + '" stroke-width="8"></path>';
-    }).join('');
-    return '<svg viewBox="0 0 42 42" role="img">' + paths + '</svg>';
   }
 
   // ---------- table ----------
