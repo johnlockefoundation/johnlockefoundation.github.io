@@ -24,6 +24,7 @@
     compareB: 'none',
     domain: 40,
     selectedDistrict: null,
+    districtView: 'table', // 'table' | 'graph'
   };
 
   function fmt(n) { return n.toLocaleString('en-US'); }
@@ -215,21 +216,39 @@
 
     var daily = (state.data.districtDaily[chamber] && state.data.districtDaily[chamber][d.id]) || [];
     var districtSeries = cumulativeDaily(daily);
+    var isTable = state.districtView === 'table';
+
+    var toggle = '<div class="toggle-bar" role="tablist" style="margin:10px 0 12px">'
+      + '<button type="button" class="toggle' + (isTable ? ' active' : '') + '" data-view="table" role="tab" aria-selected="' + isTable + '">Table</button>'
+      + '<button type="button" class="toggle' + (!isTable ? ' active' : '') + '" data-view="graph" role="tab" aria-selected="' + !isTable + '">Graph</button>'
+      + '</div>';
+
+    var body = isTable
+      ? '<div class="share-bar">' + bar + '</div>'
+        + '<table class="stat-rows"><thead><tr><th>Party</th><th>Ballots</th><th>Share</th></tr></thead>'
+        + '<tbody>' + rows + '</tbody></table>'
+        + '<p class="margin-line">Partisan lean: <strong class="' + (margin(d) >= 0 ? 'pos' : 'neg') + '">'
+        + leadPhrase(margin(d)) + '</strong></p>'
+      : '<div id="district-chart" class="district-chart"></div>'
+        + '<p class="chart-sub" style="margin-top:6px">Cumulative ballots by day for this district, ' + state.data.currentId + ' general.</p>';
 
     document.getElementById('chart').innerHTML =
       '<div class="district-detail">'
       + '<h3 class="detail-title">' + esc(d.id) + '</h3>'
       + '<p class="section-sub">' + esc(chamberLabel) + ' &middot; ' + fmt(t) + ' ballots recorded so far</p>'
-      + '<div class="share-bar">' + bar + '</div>'
-      + '<table class="stat-rows"><thead><tr><th>Party</th><th>Ballots</th><th>Share</th></tr></thead>'
-      + '<tbody>' + rows + '</tbody></table>'
-      + '<p class="margin-line">Partisan lean: <strong class="' + (margin(d) >= 0 ? 'pos' : 'neg') + '">'
-      + leadPhrase(margin(d)) + '</strong></p>'
-      + '<div id="district-chart" class="district-chart"></div>'
-      + '<p class="chart-sub" style="margin-top:6px">Cumulative ballots by day for this district, ' + state.data.currentId + ' general.</p>'
+      + toggle
+      + body
       + '<button type="button" class="toggle back-btn" id="back-to-chart">&larr; Trajectory</button>'
       + '</div>';
-    renderDistrictChart(districtSeries);
+
+    Array.prototype.forEach.call(document.querySelectorAll('.district-detail .toggle[data-view]'), function (b) {
+      b.addEventListener('click', function () {
+        state.districtView = b.dataset.view;
+        renderRightPanel();
+      });
+    });
+
+    if (!isTable) renderDistrictChart(districtSeries);
     document.getElementById('chart-legend').innerHTML = '';
     document.getElementById('chart-sub').innerHTML = '';
     var back = document.getElementById('back-to-chart');
