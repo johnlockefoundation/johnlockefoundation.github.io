@@ -218,6 +218,12 @@
     var districtSeries = cumulativeDaily(daily);
     var isTable = state.districtView === 'table';
 
+    var civ = (state.data.civitas || {})[d.id];
+    var civLine = civ
+      ? '<p class="margin-line">Civitas partisan lean: <strong class="' + (civ.party === 'D' ? 'pos' : 'neg') + '">'
+        + civ.bucket + ' ' + (civ.party === 'D' ? 'Democratic' : 'Republican') + ' (' + esc(civ.margin) + ')</strong></p>'
+      : '';
+
     var toggle = '<div class="toggle-bar" role="tablist" style="margin:10px 0 12px">'
       + '<button type="button" class="toggle' + (isTable ? ' active' : '') + '" data-view="table" role="tab" aria-selected="' + isTable + '">Table</button>'
       + '<button type="button" class="toggle' + (!isTable ? ' active' : '') + '" data-view="graph" role="tab" aria-selected="' + !isTable + '">Graph</button>'
@@ -236,6 +242,7 @@
       '<div class="district-detail">'
       + '<h3 class="detail-title">' + esc(d.id) + '</h3>'
       + '<p class="section-sub">' + esc(chamberLabel) + ' &middot; ' + fmt(t) + ' ballots recorded so far</p>'
+      + civLine
       + toggle
       + body
       + '<button type="button" class="toggle back-btn" id="back-to-chart">&larr; Trajectory</button>'

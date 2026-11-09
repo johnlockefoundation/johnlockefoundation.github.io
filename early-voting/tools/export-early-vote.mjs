@@ -20,7 +20,8 @@
 // windowed to [election day - 120d, election day + 45d] to drop bad dates.
 
 import { spawnSync } from 'node:child_process';
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { DatabaseSync } from 'node:sqlite';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -103,6 +104,29 @@ function byDistrict(column) {
 }
 const statewide = query(`select ${PARTY_SUMS} from ${current.table}`)[0].map(Number);
 
+// Civitas partisan lean (invariant reference data) for state (and federal)
+// races, from the carolina_elections SQLite database. Bucket + party + margin,
+// e.g. { bucket: 'Safe', party: 'R', margin: 'R+13' }.
+const civitasDbPath = process.env.CIVITAS_DB
+  || resolve(join(HERE, '..', '..', '..', 'carolina_elections', 'backend', 'db', 'nc28.sqlite'));
+const civitas = {};
+if (existsSync(civitasDbPath)) {
+  const db = new DatabaseSync(civitasDbPath, { readOnly: true });
+  for (const r of db.prepare(
+    "SELECT district_id, partisan_lean, partisan_party, cpi_value FROM districts WHERE partisan_lean IS NOT NULL"
+  ).all()) {
+    civitas[r.district_id] = {
+      bucket: r.partisan_lean,
+      party: r.partisan_party,
+      margin: r.cpi_value,
+    };
+  }
+  db.close();
+  console.log(`Civitas lean: ${Object.keys(civitas).length} districts from ${civitasDbPath}`);
+} else {
+  console.warn(`Civitas db not found at ${civitasDbPath}; skipping civitas lean.`);
+}
+
 // Per-district, per-day ballot counts for the current election, for the
 // district trajectory chart. Windowed the same way as the daily aggregates.
 const from = addDays(current.date, -120);
@@ -153,6 +177,7 @@ const payload = {
   currentId: CURRENT,
   elections,
   districtDaily,
+  civitas,
   chambers: {
     us_house: {
       label: 'U.S. House',
