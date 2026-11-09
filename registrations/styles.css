@@ -81,6 +81,15 @@ select,input[type="search"]{
 select:focus,input[type="search"]:focus{outline:2px solid var(--accent);outline-offset:1px}
 input[type="search"]::placeholder{color:#94a3b8}
 
+/* Card breakdown toggle, in the nc26 toggle style. */
+.toggle-bar{display:inline-flex;background:var(--input);border-radius:12px;padding:4px;gap:4px;margin:0 0 12px;flex-wrap:wrap}
+.toggle{
+  border:0;background:transparent;border-radius:9px;padding:7px 14px;cursor:pointer;
+  font-family:var(--font-display);font-weight:700;font-size:13px;letter-spacing:.04em;color:var(--muted);
+}
+.toggle.active{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(15,23,42,.12)}
+.toggle:hover:not(.active){color:var(--accent)}
+
 .stat-rows{width:100%;border-collapse:collapse;font-size:13px}
 .stat-rows th,.stat-rows td{padding:6px 4px;text-align:right;border-bottom:1px solid var(--input);white-space:nowrap}
 .stat-rows th:first-child,.stat-rows td:first-child{text-align:left}
@@ -95,6 +104,7 @@ input[type="search"]::placeholder{color:#94a3b8}
 .margin-line strong{color:var(--ink)}
 
 .pies{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.pies.single{grid-template-columns:1fr}
 @media (max-width:420px){.pies{grid-template-columns:1fr}}
 .pie h4{margin:0 0 6px;font-family:var(--font-display);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--muted);text-align:center}
 .pie svg{width:100%;max-width:170px;height:auto;display:block;margin:0 auto}

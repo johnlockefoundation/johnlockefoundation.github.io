@@ -22,6 +22,11 @@
     { key: 'unaff', label: 'Unaffiliated' },
     { key: 'other', label: 'Other parties' },
   ];
+  var RACE_ROWS = [
+    { key: 'white', label: 'White' },
+    { key: 'black', label: 'Black' },
+    { key: 'otherRace', label: 'Other' },
+  ];
 
   var state = {
     data: null,        // decoded payload
@@ -31,6 +36,7 @@
     baseline: 0,       // index ~4 weeks before latest (map comparison)
     selectedId: 1,     // statewide totals by default
     cardFrom: 0, cardTo: 0,
+    cardView: 'party', // 'party' | 'race'
     tableFrom: 0, tableTo: 0,
     sortKey: 'name', sortDir: 1,
     search: '',
@@ -243,7 +249,9 @@
     var from = state.cardFrom, to = state.cardTo;
     var card = document.getElementById('county-card');
 
-    var rows = PARTY_ROWS.map(function (r) {
+    var isParty = state.cardView === 'party';
+    var rowDefs = isParty ? PARTY_ROWS : RACE_ROWS;
+    var rows = rowDefs.map(function (r) {
       var a = val(county, r.key, from), b = val(county, r.key, to);
       return '<tr><td>' + r.label + '</td><td>' + fmt(a) + '</td><td>' + fmt(b) + '</td><td>'
         + fmtSigned(b - a) + '</td></tr>';
@@ -255,26 +263,43 @@
     var mA = margin(county, from), mB = margin(county, to);
     var dm = mB - mA;
 
+    var toggle = '<div class="toggle-bar" role="tablist">'
+      + '<button type="button" class="toggle' + (isParty ? ' active' : '') + '" data-view="party" role="tab" aria-selected="' + isParty + '">Partisan split</button>'
+      + '<button type="button" class="toggle' + (!isParty ? ' active' : '') + '" data-view="race" role="tab" aria-selected="' + !isParty + '">Racial demographics</button>'
+      + '</div>';
+
+    // The partisan view keeps its donut; the racial view is the same
+    // From/To/Change table only (the standalone race pie was dropped).
+    var below = isParty
+      ? '<p class="margin-line">Democratic−Republican share: <strong>' + mA.toFixed(1) + '%</strong> → '
+        + '<strong>' + mB.toFixed(1) + '%</strong> '
+        + '(<span class="' + (dm >= 0 ? 'pos' : 'neg') + '">' + fmtPp(dm) + '</span>)</p>'
+        + '<div class="pies single">'
+        + pieBlock('Partisan split', [
+          { key: 'dem', label: 'Democratic' }, { key: 'rep', label: 'Republican' },
+          { key: 'unaff', label: 'Unaffiliated' }, { key: 'other', label: 'Other parties' },
+        ], county, to)
+        + '</div>'
+        + '<p class="pie-note">Breakdown as of ' + fmtDate(state.data.weeks[to]) + '</p>'
+      : '';
+
     card.innerHTML = '<h3 id="card-county-name">' + esc(county.name) + '</h3>'
       + '<div class="card-dates">'
       + '<label>From <select id="card-from"></select></label>'
       + '<label>To <select id="card-to"></select></label>'
       + '</div>'
-      + '<table class="stat-rows"><thead><tr><th>Registration</th><th>From</th><th>To</th><th>Change</th></tr></thead>'
+      + toggle
+      + '<table class="stat-rows"><thead><tr><th>' + (isParty ? 'Registration' : 'Racial group')
+      + '</th><th>From</th><th>To</th><th>Change</th></tr></thead>'
       + '<tbody>' + rows + '</tbody></table>'
-      + '<p class="margin-line">Democratic−Republican share: <strong>' + mA.toFixed(1) + '%</strong> → '
-      + '<strong>' + mB.toFixed(1) + '%</strong> '
-      + '(<span class="' + (dm >= 0 ? 'pos' : 'neg') + '">' + fmtPp(dm) + '</span>)</p>'
-      + '<div class="pies">'
-      + pieBlock('Partisan split', [
-        { key: 'dem', label: 'Democratic' }, { key: 'rep', label: 'Republican' },
-        { key: 'unaff', label: 'Unaffiliated' }, { key: 'other', label: 'Other parties' },
-      ], county, to)
-      + pieBlock('Racial split', [
-        { key: 'white', label: 'White' }, { key: 'black', label: 'Black' }, { key: 'otherRace', label: 'Other' },
-      ], county, to)
-      + '</div>'
-      + '<p class="pie-note">Breakdowns as of ' + fmtDate(state.data.weeks[to]) + '</p>';
+      + below;
+
+    Array.prototype.forEach.call(card.querySelectorAll('.toggle'), function (b) {
+      b.addEventListener('click', function () {
+        state.cardView = b.dataset.view;
+        renderCard();
+      });
+    });
 
     var fromSel = card.querySelector('#card-from');
     var toSel = card.querySelector('#card-to');
@@ -336,13 +361,13 @@
   var COLUMNS = [
     { key: 'name', label: 'County', text: true },
     { key: 'total', label: 'Registered' },
-    { key: 'dTotal', label: 'Δ reg.' },
+    { key: 'dTotal', label: 'Δ reg.', delta: true },
     { key: 'dem', label: 'Dem' },
-    { key: 'dDem', label: 'Δ Dem' },
+    { key: 'dDem', label: 'Δ Dem', delta: true },
     { key: 'rep', label: 'Rep' },
-    { key: 'dRep', label: 'Δ Rep' },
+    { key: 'dRep', label: 'Δ Rep', delta: true },
     { key: 'unaff', label: 'Unaff.' },
-    { key: 'dUnaff', label: 'Δ Unaff.' },
+    { key: 'dUnaff', label: 'Δ Unaff.', delta: true },
     { key: 'dMargin', label: 'D−R Δ pp' },
   ];
 
@@ -387,7 +412,7 @@
         if (c.key === 'dMargin') {
           return '<td class="' + (v >= 0 ? 'pos' : 'neg') + '">' + fmtPp(v) + '</td>';
         }
-        if (c.key.charAt(0) === 'd') return '<td>' + fmtSigned(v) + '</td>';
+        if (c.delta) return '<td>' + fmtSigned(v) + '</td>';
         return '<td>' + fmt(v) + '</td>';
       }).join('');
       return '<tr data-id="' + r.id + '" class="'
