@@ -159,11 +159,11 @@ const payload = {
       districts: byDistrict('CongDist').map((r) => ({ id: `NC-${pad2(r.d)}`, ...r })),
     },
     state_house: {
-      label: 'State House',
+      label: 'NC House',
       districts: byDistrict('HouseDist').map((r) => ({ id: `HD-${r.d}`, ...r })),
     },
     state_senate: {
-      label: 'State Senate',
+      label: 'NC Senate',
       districts: byDistrict('SenDist').map((r) => ({ id: `SD-${pad2(r.d)}`, ...r })),
     },
     us_senate: {
