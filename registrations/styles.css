@@ -1,114 +1,132 @@
+/* nc26 design language, light mode. Same tokens and components as
+   carolina_elections/frontend/src/styles.css, with the dark slate palette
+   inverted: white cards on a slate-50 ground, slate-900 ink, blue accent.
+   Fonts are the Locke standard: Barlow Condensed for display, Mulish standing
+   in for the licensed Effra for body. */
 :root{
-  --paper:#f6f1e7;
-  --paper-deep:#ece4d1;
-  --ink:#211d16;
-  --ink-soft:#6f6656;
-  --rule:#d8cdb6;
-  --accent:#8a2b1d;
-  --dem:#2166ac;
-  --rep:#b2182b;
-  --unaff:#7d7666;
-  --other-party:#b08968;
-  --serif:"Newsreader",Georgia,"Times New Roman",serif;
-  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --ink:#0f172a;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --input:#f1f5f9;
+  --d:#2563eb;
+  --r:#dc2626;
+  --accent:#2563eb;
+  --shadow:0 1px 2px rgba(15,23,42,.05),0 8px 24px rgba(15,23,42,.07);
+  --font-body:'Effra','Mulish',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --font-display:'Barlow Condensed','Mulish',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box}
-body{
-  margin:0;
-  background:var(--paper);
-  color:var(--ink);
-  font-family:var(--serif);
-  font-size:16px;
-  line-height:1.5;
-  -webkit-font-smoothing:antialiased;
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.app{max-width:1440px;margin:0 auto;padding:18px 22px 40px;position:relative}
+
+/* Topbar */
+.topbar{display:flex;align-items:center;justify-content:center;padding:8px 2px 6px}
+.brand-link{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:inherit}
+.brand-title{
+  margin:0;font-family:var(--font-display);font-weight:700;text-transform:uppercase;
+  font-size:clamp(30px,4.6vw,46px);line-height:1.05;letter-spacing:.01em;color:var(--ink);
 }
-a{color:inherit}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.container{max-width:1180px;margin:0 auto;padding:0 clamp(1rem,3vw,2rem) 3rem;width:100%}
+.brand-byline{font-size:9.5px;font-weight:600;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;margin-top:6px}
+.brand-byline em{font-style:italic;text-transform:lowercase;font-weight:400}
+.brand-link:hover .brand-byline{color:var(--accent)}
+.standfirst{margin:14px auto 0;max-width:66ch;text-align:center;font-size:14px;color:var(--muted)}
+.updated{margin:10px 0 0;text-align:center;font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 
-.masthead{padding:clamp(2rem,5vw,3.4rem) 0 0;text-align:center}
-.project-kind{font-family:var(--sans);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin:0 0 .9rem}
-.masthead-title{margin:0;font-weight:500;font-size:clamp(1.9rem,4.4vw,3rem);line-height:1.08;letter-spacing:-.01em}
-.masthead-ornament{margin:1rem auto 0;display:flex;align-items:center;justify-content:center;gap:.85rem;max-width:340px}
-.masthead-ornament::before,.masthead-ornament::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--rule))}
-.masthead-ornament::after{background:linear-gradient(90deg,var(--rule),transparent)}
-.masthead-ornament .diamond{flex:none;width:.4em;height:.4em;border:1px solid var(--accent);transform:rotate(45deg)}
-.standfirst{margin:1rem auto 0;max-width:58ch;font-style:italic;font-size:1.05rem;color:var(--ink-soft)}
-.updated{margin:.8rem 0 0;font-family:var(--sans);font-size:.72rem;letter-spacing:.06em;color:var(--ink-soft)}
+/* Section headings: small-caps display type, no rules. */
+.section-head{margin-top:26px;margin-bottom:12px}
+.section-head h2{margin:0;font-family:var(--font-display);font-weight:700;font-size:22px;letter-spacing:.04em;text-transform:uppercase}
+.section-sub{margin:4px 0 0;font-size:13px;color:var(--muted);max-width:90ch}
 
-.section-head{border-top:3px solid var(--ink);margin-top:clamp(1.8rem,4vw,2.6rem);padding-top:1rem}
-.section-head h2{margin:0;font-weight:500;font-size:1.45rem;letter-spacing:-.005em}
-.section-sub{margin:.35rem 0 0;font-size:.95rem;color:var(--ink-soft)}
+/* Panels: the nc26 card. */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px}
 
-.map-grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:1.6rem;margin-top:1.2rem;align-items:start}
-@media (max-width:920px){.map-grid{grid-template-columns:1fr}}
+.map-grid{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:18px;align-items:start}
+@media (max-width:1080px){.map-grid{grid-template-columns:1fr}}
 .map-wrap{position:relative}
 #map svg{width:100%;height:auto;display:block}
-.county-path{stroke:var(--paper);stroke-width:.6;cursor:pointer;transition:opacity .15s}
+.county-path{stroke:#ffffff;stroke-width:.6;cursor:pointer;transition:opacity .15s}
 .county-path:hover{stroke:var(--ink);stroke-width:1.2}
 .county-path.selected{stroke:var(--ink);stroke-width:1.6}
 #map.has-selection .county-path:not(.selected):not(:hover){opacity:.75}
 
-.legend{display:flex;align-items:center;gap:.6rem;margin-top:.6rem;font-family:var(--sans);font-size:.7rem;color:var(--ink-soft)}
-.legend .swatches{display:flex;height:10px;flex:1;max-width:320px;border:1px solid var(--rule)}
+.legend{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap;font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--muted)}
+.legend .swatches{display:flex;height:10px;flex:1;min-width:160px;max-width:340px;border:1px solid var(--line);border-radius:5px;overflow:hidden}
 .legend .swatches span{flex:1}
-.legend-caption{flex-basis:100%;margin-top:.2rem}
+.legend-caption{flex-basis:100%;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase}
 
 .tooltip{
-  position:absolute;pointer-events:none;background:var(--ink);color:var(--paper);
-  font-family:var(--sans);font-size:.75rem;line-height:1.4;padding:.45rem .6rem;
-  max-width:240px;z-index:5;display:none;
+  position:absolute;pointer-events:none;background:#0f172a;color:#e2e8f0;
+  font-size:12px;line-height:1.45;padding:8px 11px;border-radius:9px;
+  max-width:250px;z-index:5;display:none;box-shadow:var(--shadow);
 }
-.tooltip strong{display:block;font-family:var(--serif);font-size:.95rem;font-weight:500}
+.tooltip strong{display:block;font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:.03em}
 
-.county-card{border:1px solid var(--rule);background:#fbf8f0;padding:1.1rem 1.2rem 1.3rem}
-.county-card h3{margin:0;font-weight:500;font-size:1.35rem}
-.card-dates{display:flex;gap:.7rem;margin:.8rem 0 1rem;font-family:var(--sans);font-size:.75rem}
-.card-dates label{display:flex;flex-direction:column;gap:.25rem;flex:1;color:var(--ink-soft)}
-select,input[type="search"]{
-  font-family:var(--sans);font-size:.8rem;color:var(--ink);
-  background:var(--paper);border:1px solid var(--rule);padding:.35rem .4rem;border-radius:0;
-  max-width:100%;
+/* County card */
+.county-card h3{margin:0;font-family:var(--font-display);font-weight:700;font-size:26px;letter-spacing:.02em;text-transform:uppercase}
+.card-dates{display:flex;gap:10px;margin:12px 0 14px}
+.card-dates label{display:flex;flex-direction:column;gap:4px;flex:1}
+.card-dates label,.table-controls label{
+  font-family:var(--font-display);font-size:10.5px;letter-spacing:.14em;font-weight:700;
+  text-transform:uppercase;color:var(--muted);
 }
-.stat-rows{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:.78rem}
-.stat-rows th,.stat-rows td{padding:.32rem .3rem;text-align:right;border-bottom:1px solid var(--paper-deep);white-space:nowrap}
+select,input[type="search"]{
+  font-family:var(--font-body);font-size:13px;color:var(--ink);
+  background:var(--input);border:1px solid var(--line);border-radius:9px;
+  padding:7px 10px;max-width:100%;
+}
+select:focus,input[type="search"]:focus{outline:2px solid var(--accent);outline-offset:1px}
+input[type="search"]::placeholder{color:#94a3b8}
+
+.stat-rows{width:100%;border-collapse:collapse;font-size:13px}
+.stat-rows th,.stat-rows td{padding:6px 4px;text-align:right;border-bottom:1px solid var(--input);white-space:nowrap}
 .stat-rows th:first-child,.stat-rows td:first-child{text-align:left}
-.stat-rows thead th{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);border-bottom:1px solid var(--rule)}
-.stat-rows .total-row td{border-top:1px solid var(--rule);font-weight:600}
-.pos{color:var(--dem)}
-.neg{color:var(--rep)}
-.margin-line{font-family:var(--sans);font-size:.78rem;margin:.7rem 0 0;color:var(--ink-soft)}
+.stat-rows thead th{
+  font-family:var(--font-display);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:700;color:var(--muted);border-bottom:1px solid var(--line);
+}
+.stat-rows .total-row td{border-top:1px solid var(--line);font-weight:700}
+.pos{color:var(--d)}
+.neg{color:var(--r)}
+.margin-line{font-size:13px;margin:10px 0 0;color:var(--muted)}
 .margin-line strong{color:var(--ink)}
 
-.pies{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:1.1rem}
+.pies{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
 @media (max-width:420px){.pies{grid-template-columns:1fr}}
-.pie h4{margin:0 0 .4rem;font-family:var(--sans);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);text-align:center}
+.pie h4{margin:0 0 6px;font-family:var(--font-display);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--muted);text-align:center}
 .pie svg{width:100%;max-width:170px;height:auto;display:block;margin:0 auto}
-.pie-legend{list-style:none;margin:.5rem 0 0;padding:0;font-family:var(--sans);font-size:.72rem}
-.pie-legend li{display:flex;align-items:center;gap:.4rem;padding:.12rem 0}
-.pie-legend .dot{width:.6rem;height:.6rem;flex:none}
-.pie-legend .pct{margin-left:auto;color:var(--ink-soft)}
-.pie-note{font-family:var(--sans);font-size:.68rem;color:var(--ink-soft);text-align:center;margin:.4rem 0 0}
+.pie-legend{list-style:none;margin:8px 0 0;padding:0;font-size:12px}
+.pie-legend li{display:flex;align-items:center;gap:6px;padding:2px 0}
+.pie-legend .dot{width:9px;height:9px;flex:none;border-radius:2px}
+.pie-legend .pct{margin-left:auto;color:var(--muted)}
+.pie-note{font-size:11px;color:var(--muted);text-align:center;margin:8px 0 0}
 
-.table-controls{display:flex;flex-wrap:wrap;gap:1rem;margin:1rem 0;font-family:var(--sans);font-size:.75rem;color:var(--ink-soft);align-items:end}
-.table-controls label{display:flex;flex-direction:column;gap:.25rem}
+/* Table */
+.table-controls{display:flex;flex-wrap:wrap;gap:16px;margin:0 0 14px;align-items:end}
+.table-controls label{display:flex;flex-direction:column;gap:4px}
 .search-label{margin-left:auto}
 @media (max-width:640px){.search-label{margin-left:0}}
-.table-wrap{overflow-x:auto;border:1px solid var(--rule);background:#fbf8f0;max-height:560px;overflow-y:auto}
-#county-table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:.78rem}
-#county-table th,#county-table td{padding:.4rem .55rem;text-align:right;white-space:nowrap;border-bottom:1px solid var(--paper-deep)}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;max-height:560px;overflow-y:auto;background:var(--card)}
+#county-table{width:100%;border-collapse:collapse;font-size:13px}
+#county-table th,#county-table td{padding:7px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--input)}
 #county-table th:first-child,#county-table td:first-child{text-align:left}
 #county-table thead th{
-  position:sticky;top:0;background:var(--paper-deep);cursor:pointer;user-select:none;
-  font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);
+  position:sticky;top:0;background:var(--input);cursor:pointer;user-select:none;
+  font-family:var(--font-display);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--ink);
 }
+#county-table thead th:hover{color:var(--accent)}
 #county-table tbody tr{cursor:pointer}
-#county-table tbody tr:hover{background:var(--paper-deep)}
-#county-table tbody tr.selected{background:#efe6cf}
-#county-table tr.statewide td{font-weight:600;background:var(--paper-deep)}
+#county-table tbody tr:hover{background:#f8fafc}
+#county-table tbody tr.selected{background:#eff6ff}
+#county-table tr.statewide td{font-weight:700;background:var(--input)}
 
-.methodology{margin-top:2.4rem;border-top:1px solid var(--rule);padding-top:1rem;max-width:75ch}
-.methodology h2{margin:0 0 .5rem;font-weight:500;font-size:1.1rem}
-.methodology p{font-size:.9rem;color:var(--ink-soft)}
-.loading{text-align:center;padding:3rem 0;font-style:italic;color:var(--ink-soft)}
-.footer{margin-top:2.5rem;border-top:1px solid var(--rule);padding-top:1rem;font-family:var(--sans);font-size:.72rem;color:var(--ink-soft)}
+.methodology{margin-top:28px;max-width:80ch}
+.methodology h2{margin:0 0 6px;font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:.06em;text-transform:uppercase}
+.methodology p{font-size:13px;color:var(--muted)}
+.loading{text-align:center;padding:40px 0;font-style:italic;color:var(--muted)}
+.footer{margin-top:30px;border-top:1px solid var(--line);padding-top:14px;font-size:12px;color:var(--muted)}
+.footer a{color:var(--muted);text-decoration:none}
+.footer a:hover{color:var(--accent)}

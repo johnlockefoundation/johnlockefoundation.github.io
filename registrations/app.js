@@ -13,8 +13,8 @@
 
   var FIELDS = ['dem', 'rep', 'unaff', 'other', 'white', 'black', 'otherRace', 'total'];
   var COLORS = {
-    dem: '#2166ac', rep: '#b2182b', unaff: '#7d7666', other: '#b08968',
-    white: '#6d9dc5', black: '#2f3e46', otherRace: '#c9a227',
+    dem: '#2563eb', rep: '#dc2626', unaff: '#94a3b8', other: '#f59e0b',
+    white: '#94a3b8', black: '#1e293b', otherRace: '#fbbf24',
   };
   var PARTY_ROWS = [
     { key: 'dem', label: 'Democratic' },
@@ -114,12 +114,12 @@
     var ca = hexToRgb(a), cb = hexToRgb(b);
     return 'rgb(' + ca.map(function (v, i) { return Math.round(v + (cb[i] - v) * t); }).join(',') + ')';
   }
-  var NEUTRAL = '#eee5d0';
+  var NEUTRAL = '#eef2f7';
   function colorFor(v) {
     var t = Math.max(-1, Math.min(1, v / state.domain));
     var m = Math.abs(t);
     var dark = t >= 0 ? COLORS.dem : COLORS.rep;
-    var light = t >= 0 ? '#92c5de' : '#e8a08c';
+    var light = t >= 0 ? '#93c5fd' : '#fca5a5';
     return m <= 0.5 ? lerpColor(NEUTRAL, light, m * 2) : lerpColor(light, dark, (m - 0.5) * 2);
   }
 
@@ -220,7 +220,7 @@
 
   function buildLegend() {
     var el = document.getElementById('legend');
-    var swatches = [COLORS.rep, '#e8a08c', NEUTRAL, '#92c5de', COLORS.dem]
+    var swatches = [COLORS.rep, '#fca5a5', NEUTRAL, '#93c5fd', COLORS.dem]
       .map(function (c) { return '<span style="background:' + c + '"></span>'; }).join('');
     el.innerHTML = '<span>−' + state.domain.toFixed(1) + '</span>'
       + '<div class="swatches">' + swatches + '</div>'
