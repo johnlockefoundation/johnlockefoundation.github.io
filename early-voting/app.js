@@ -23,6 +23,7 @@
     compareA: '2024',
     compareB: 'none',
     domain: 40,
+    selectedDistrict: null,
   };
 
   function fmt(n) { return n.toLocaleString('en-US'); }
@@ -115,9 +116,18 @@
       var path = document.createElementNS(svgNS, 'path');
       path.setAttribute('d', pathData);
       path.setAttribute('class', 'county-path');
+      path.dataset.districtId = f.district_id;
       path.style.fill = colorFor(margin(d));
+      path.tabIndex = 0;
+      path.setAttribute('role', 'button');
+      path.setAttribute('aria-label', f.district_id);
+      path.addEventListener('click', function () { selectDistrict(f.district_id, d); });
+      path.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectDistrict(f.district_id, d); }
+      });
       path.addEventListener('mousemove', function (e) { showTooltip(e, f.district_id, d); });
       path.addEventListener('mouseleave', hideTooltip);
+      path.classList.toggle('selected', f.district_id === state.selectedDistrict);
       var title = document.createElementNS(svgNS, 'title');
       title.textContent = f.district_id;
       path.appendChild(title);
@@ -138,6 +148,21 @@
       + '<div class="swatches">' + swatches + '</div>'
       + '<span>+' + state.domain + '</span>'
       + '<span class="legend-caption">Republican lead ← &nbsp; D−R share of ballots, pp &nbsp; → Democratic lead</span>';
+  }
+
+  function selectDistrict(id, d) {
+    state.selectedDistrict = (state.selectedDistrict === id) ? null : id;
+    Array.prototype.forEach.call(document.querySelectorAll('#map .county-path'), function (p) {
+      p.classList.toggle('selected', p.dataset.districtId === state.selectedDistrict);
+    });
+    var info = document.getElementById('district-info');
+    if (state.selectedDistrict && d) {
+      info.innerHTML = '<strong>' + esc(id) + '</strong> &middot; D ' + fmt(d.dem) + ' &middot; R '
+        + fmt(d.rep) + ' &middot; U ' + fmt(d.unaff) + ' &middot; ' + fmt(total(d)) + ' ballots &middot; D−R '
+        + fmtPp(margin(d));
+    } else {
+      info.textContent = 'Click a district for details.';
+    }
   }
 
   function showTooltip(e, id, d) {
@@ -168,6 +193,8 @@
       b.setAttribute('aria-selected', key === state.chamber ? 'true' : 'false');
       b.addEventListener('click', function () {
         state.chamber = key;
+        state.selectedDistrict = null;
+        document.getElementById('district-info').textContent = 'Click a district for details.';
         renderChamberToggles();
         renderMap();
       });
