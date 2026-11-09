@@ -32,6 +32,12 @@
     return MONTHS[Number(p[1]) - 1] + ' ' + Number(p[2]) + ', ' + p[0];
   }
   function fmtPp(n) { return (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n).toFixed(1) + ' pp'; }
+  // Directional wording so a Republican lead is never shown as a negative
+  // number: "4.2 pp more Republican" instead of "-4.2 pp".
+  function leadPhrase(pp) {
+    var a = Math.abs(pp).toFixed(1);
+    return pp >= 0 ? a + ' pp more Democratic' : a + ' pp more Republican';
+  }
   function fmtAxis(n) {
     if (n >= 1000000) return (n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1) + 'M';
     if (n >= 1000) return Math.round(n / 1000) + 'k';
@@ -144,15 +150,15 @@
     mapEl.appendChild(svg);
 
     document.getElementById('map-sub').textContent =
-      'Democratic-minus-Republican share of ballots recorded so far, by district (percentage points). '
+      'Partisan lean of ballots recorded so far, by district (more Democratic vs. more Republican). '
       + state.data.chambers[chamber].districts.length + ' districts.';
 
     var swatches = [COLORS.rep, '#fca5a5', NEUTRAL, '#93c5fd', COLORS.dem]
       .map(function (c) { return '<span style="background:' + c + '"></span>'; }).join('');
-    document.getElementById('legend').innerHTML = '<span>−' + state.domain + '</span>'
+    document.getElementById('legend').innerHTML = '<span>' + state.domain + ' more R</span>'
       + '<div class="swatches">' + swatches + '</div>'
-      + '<span>+' + state.domain + '</span>'
-      + '<span class="legend-caption">Republican lead ← &nbsp; D−R share of ballots, pp &nbsp; → Democratic lead</span>';
+      + '<span>' + state.domain + ' more D</span>'
+      + '<span class="legend-caption">More Republican &nbsp;←&nbsp; partisan lean of ballots &nbsp;→&nbsp; More Democratic</span>';
   }
 
   function selectDistrict(id, d) {
@@ -163,8 +169,8 @@
     var info = document.getElementById('district-info');
     if (state.selectedDistrict && d) {
       info.innerHTML = '<strong>' + esc(id) + '</strong> &middot; D ' + fmt(d.dem) + ' &middot; R '
-        + fmt(d.rep) + ' &middot; U ' + fmt(d.unaff) + ' &middot; ' + fmt(total(d)) + ' ballots &middot; D−R '
-        + fmtPp(margin(d));
+        + fmt(d.rep) + ' &middot; U ' + fmt(d.unaff) + ' &middot; ' + fmt(total(d)) + ' ballots &middot; '
+        + leadPhrase(margin(d));
     } else {
       info.textContent = 'Click a district for details.';
     }
@@ -217,8 +223,8 @@
       + '<div class="share-bar">' + bar + '</div>'
       + '<table class="stat-rows"><thead><tr><th>Party</th><th>Ballots</th><th>Share</th></tr></thead>'
       + '<tbody>' + rows + '</tbody></table>'
-      + '<p class="margin-line">Democratic−Republican share: <strong>' + margin(d).toFixed(1) + '%</strong> '
-      + '(<span class="' + (margin(d) >= 0 ? 'pos' : 'neg') + '">' + fmtPp(margin(d)) + '</span>)</p>'
+      + '<p class="margin-line">Partisan lean: <strong class="' + (margin(d) >= 0 ? 'pos' : 'neg') + '">'
+      + leadPhrase(margin(d)) + '</strong></p>'
       + '<div id="district-chart" class="district-chart"></div>'
       + '<p class="chart-sub" style="margin-top:6px">Cumulative ballots by day for this district, ' + state.data.currentId + ' general.</p>'
       + '<button type="button" class="toggle back-btn" id="back-to-chart">&larr; Trajectory</button>'
@@ -294,7 +300,7 @@
     var tip = document.getElementById('map-tooltip');
     var wrap = document.querySelector('.map-wrap').getBoundingClientRect();
     tip.innerHTML = '<strong>' + esc(id) + '</strong>'
-      + 'D−R share: <b>' + fmtPp(margin(d)) + '</b><br>'
+      + 'Partisan lean: <b>' + leadPhrase(margin(d)) + '</b><br>'
       + 'Dem ' + fmt(d.dem) + ' · Rep ' + fmt(d.rep) + ' · Unaff ' + fmt(d.unaff) + '<br>'
       + 'Total ballots: ' + fmt(total(d));
     tip.style.display = 'block';

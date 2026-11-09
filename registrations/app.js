@@ -101,6 +101,8 @@
   function fmt(n) { return n.toLocaleString('en-US'); }
   function fmtSigned(n) { return (n > 0 ? '+' : n < 0 ? '−' : '') + fmt(Math.abs(n)); }
   function fmtPp(n) { return (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n).toFixed(2) + ' pp'; }
+  function leadPhrase(pp) { return Math.abs(pp).toFixed(2) + ' pp more ' + (pp >= 0 ? 'Democratic' : 'Republican'); }
+  function shiftPhrase(pp) { return Math.abs(pp).toFixed(2) + ' pp toward ' + (pp >= 0 ? 'Democrats' : 'Republicans'); }
   function normName(s) { return s.toLowerCase().replace(/[^a-z]/g, ''); }
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) {
@@ -268,9 +270,9 @@
     // Both views are the From/To/Change table; the partisan view adds the
     // D−R share line. Pie charts were dropped from the card entirely.
     var below = isParty
-      ? '<p class="margin-line">Democratic−Republican share: <strong>' + mA.toFixed(1) + '%</strong> → '
-        + '<strong>' + mB.toFixed(1) + '%</strong> '
-        + '(<span class="' + (dm >= 0 ? 'pos' : 'neg') + '">' + fmtPp(dm) + '</span>)</p>'
+      ? '<p class="margin-line">Partisan lean: <strong>' + leadPhrase(mA) + '</strong> → '
+        + '<strong>' + leadPhrase(mB) + '</strong> '
+        + '(<span class="' + (dm >= 0 ? 'pos' : 'neg') + '">' + shiftPhrase(dm) + '</span>)</p>'
       : '';
 
     card.innerHTML = '<h3 id="card-county-name">' + esc(county.name) + '</h3>'
