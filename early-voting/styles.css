@@ -169,3 +169,7 @@ input[type="search"]::placeholder{color:#94a3b8}
 .district-info strong{color:var(--ink);font-family:var(--font-display);letter-spacing:.02em}
 .county-path.selected{stroke:var(--ink);stroke-width:1.6}
 .county-path:focus-visible{stroke:var(--accent);stroke-width:1.6}
+.detail-title{margin:0;font-family:var(--font-display);font-weight:700;font-size:26px;letter-spacing:.02em;text-transform:uppercase}
+.share-bar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:12px 0 14px;border:1px solid var(--line)}
+.share-seg{height:100%}
+.back-btn{margin-top:14px}

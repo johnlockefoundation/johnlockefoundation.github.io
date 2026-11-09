@@ -163,6 +163,69 @@
     } else {
       info.textContent = 'Click a district for details.';
     }
+    renderRightPanel();
+  }
+
+  function renderRightPanel() {
+    var chamber = state.chamber;
+    var controls = document.querySelector('.chart-controls');
+    if (state.selectedDistrict) {
+      if (controls) controls.style.display = 'none';
+      renderDistrictDetail();
+      return;
+    }
+    if (controls) controls.style.display = '';
+    renderChart();
+  }
+
+  function renderDistrictDetail() {
+    var chamber = state.chamber;
+    var chamberLabel = state.data.chambers[chamber].label;
+    var d = state.data.chambers[chamber].districts.filter(function (x) {
+      return x.id === state.selectedDistrict;
+    })[0];
+    if (!d) { state.selectedDistrict = null; renderChart(); return; }
+    var t = total(d);
+    var shares = [
+      { key: 'dem', label: 'Democratic', color: COLORS.dem, v: d.dem },
+      { key: 'rep', label: 'Republican', color: COLORS.rep, v: d.rep },
+      { key: 'unaff', label: 'Unaffiliated', color: COLORS.unaff, v: d.unaff },
+      { key: 'other', label: 'Other parties', color: '#f59e0b', v: d.other },
+    ];
+    var bar = shares.map(function (s) {
+      return '<span class="share-seg" style="width:' + (s.v / t * 100).toFixed(2)
+        + '%;background:' + s.color + '" title="' + s.label + ' ' + fmt(s.v) + '"></span>';
+    }).join('');
+    var rows = shares.map(function (s) {
+      return '<tr><td>' + s.label + '</td><td>' + fmt(s.v) + '</td><td>'
+        + (t ? (s.v / t * 100).toFixed(1) + '%' : '—') + '</td></tr>';
+    }).join('');
+    rows += '<tr class="total-row"><td>Total ballots</td><td>' + fmt(t) + '</td><td>100%</td></tr>';
+
+    document.getElementById('chart').innerHTML =
+      '<div class="district-detail">'
+      + '<h3 class="detail-title">' + esc(d.id) + '</h3>'
+      + '<p class="section-sub">' + esc(chamberLabel) + ' &middot; ' + fmt(t) + ' ballots recorded so far</p>'
+      + '<div class="share-bar">' + bar + '</div>'
+      + '<table class="stat-rows"><thead><tr><th>Party</th><th>Ballots</th><th>Share</th></tr></thead>'
+      + '<tbody>' + rows + '</tbody></table>'
+      + '<p class="margin-line">Democratic−Republican share: <strong>' + margin(d).toFixed(1) + '%</strong> '
+      + '(<span class="' + (margin(d) >= 0 ? 'pos' : 'neg') + '">' + fmtPp(margin(d)) + '</span>)</p>'
+      + '<button type="button" class="toggle back-btn" id="back-to-chart">&larr; Trajectory</button>'
+      + '</div>';
+    document.getElementById('chart-legend').innerHTML = '';
+    document.getElementById('chart-sub').innerHTML =
+      '<strong>' + esc(d.id) + '</strong> &middot; ' + esc(chamberLabel);
+    var back = document.getElementById('back-to-chart');
+    if (back) back.addEventListener('click', function () {
+      state.selectedDistrict = null;
+      Array.prototype.forEach.call(document.querySelectorAll('#map .county-path'), function (p) {
+        p.classList.remove('selected');
+      });
+      var info = document.getElementById('district-info');
+      if (info) info.textContent = 'Click a district for details.';
+      renderRightPanel();
+    });
   }
 
   function showTooltip(e, id, d) {
@@ -197,6 +260,7 @@
         document.getElementById('district-info').textContent = 'Click a district for details.';
         renderChamberToggles();
         renderMap();
+        renderRightPanel();
       });
       bar.appendChild(b);
     });
@@ -323,7 +387,7 @@
       sel.value = idx === 0 ? state.compareA : state.compareB;
       sel.addEventListener('change', function () {
         if (idx === 0) state.compareA = sel.value; else state.compareB = sel.value;
-        renderChart();
+        renderRightPanel();
       });
     });
   }
@@ -346,7 +410,7 @@
     renderChamberToggles();
     renderMap();
     fillCompareSelects();
-    renderChart();
+    renderRightPanel();
 
     var tip = document.createElement('div');
     tip.className = 'tooltip';
