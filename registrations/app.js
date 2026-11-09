@@ -408,6 +408,55 @@
     });
   }
 
+  // ---------- date-range presets ----------
+
+  var PRESETS = [
+    { label: '2024 General → 2026 Midterms', from: '2024-11-05', to: 'latest' },
+    { label: '2020 General → 2024 General', from: '2020-11-03', to: '2024-11-05' },
+    { label: '2018 Midterms → 2022 Midterms', from: '2018-11-06', to: '2022-11-08' },
+    { label: '2016 General → 2020 General', from: '2016-11-08', to: '2020-11-03' },
+    { label: '2008 General → 2016 General', from: '2008-11-04', to: '2016-11-08' },
+  ];
+
+  // Snapshots are weekly, so an election-day preset resolves to the last
+  // snapshot on or before that date. 'latest' means the newest snapshot.
+  function weekOnOrBefore(iso) {
+    if (iso === 'latest') return state.latest;
+    for (var i = state.latest; i >= 0; i--) {
+      if (state.data.weeks[i] <= iso) return i;
+    }
+    return 0;
+  }
+
+  function markPresets() {
+    var bar = document.getElementById('preset-bar');
+    Array.prototype.forEach.call(bar.children, function (b, i) {
+      var p = PRESETS[i];
+      b.classList.toggle('active',
+        state.tableFrom === weekOnOrBefore(p.from) && state.tableTo === weekOnOrBefore(p.to));
+    });
+  }
+
+  function renderPresets() {
+    var bar = document.getElementById('preset-bar');
+    PRESETS.forEach(function (p) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'preset';
+      b.textContent = p.label;
+      b.addEventListener('click', function () {
+        state.tableFrom = weekOnOrBefore(p.from);
+        state.tableTo = weekOnOrBefore(p.to);
+        document.getElementById('table-from').value = state.tableFrom;
+        document.getElementById('table-to').value = state.tableTo;
+        renderTable();
+        markPresets();
+      });
+      bar.appendChild(b);
+    });
+    markPresets();
+  }
+
   // ---------- selection ----------
 
   function selectCounty(id) {
@@ -477,8 +526,10 @@
             else { state.tableFrom = state.tableTo; document.getElementById('table-from').value = state.tableFrom; }
           }
           renderTable();
+          markPresets();
         });
       });
+      renderPresets();
       document.getElementById('table-search').addEventListener('input', function (e) {
         state.search = e.target.value;
         renderTable();
