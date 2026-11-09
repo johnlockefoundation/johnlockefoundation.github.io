@@ -32,6 +32,11 @@
     return MONTHS[Number(p[1]) - 1] + ' ' + Number(p[2]) + ', ' + p[0];
   }
   function fmtPp(n) { return (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n).toFixed(1) + ' pp'; }
+  function fmtAxis(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1) + 'M';
+    if (n >= 1000) return Math.round(n / 1000) + 'k';
+    return String(n);
+  }
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
@@ -202,6 +207,9 @@
     }).join('');
     rows += '<tr class="total-row"><td>Total ballots</td><td>' + fmt(t) + '</td><td>100%</td></tr>';
 
+    var daily = (state.data.districtDaily[chamber] && state.data.districtDaily[chamber][d.id]) || [];
+    var districtSeries = cumulativeDaily(daily);
+
     document.getElementById('chart').innerHTML =
       '<div class="district-detail">'
       + '<h3 class="detail-title">' + esc(d.id) + '</h3>'
@@ -211,11 +219,13 @@
       + '<tbody>' + rows + '</tbody></table>'
       + '<p class="margin-line">Democratic−Republican share: <strong>' + margin(d).toFixed(1) + '%</strong> '
       + '(<span class="' + (margin(d) >= 0 ? 'pos' : 'neg') + '">' + fmtPp(margin(d)) + '</span>)</p>'
+      + '<div id="district-chart" class="district-chart"></div>'
+      + '<p class="chart-sub" style="margin-top:6px">Cumulative ballots by day for this district, ' + state.data.currentId + ' general.</p>'
       + '<button type="button" class="toggle back-btn" id="back-to-chart">&larr; Trajectory</button>'
       + '</div>';
+    renderDistrictChart(districtSeries);
     document.getElementById('chart-legend').innerHTML = '';
-    document.getElementById('chart-sub').innerHTML =
-      '<strong>' + esc(d.id) + '</strong> &middot; ' + esc(chamberLabel);
+    document.getElementById('chart-sub').innerHTML = '';
     var back = document.getElementById('back-to-chart');
     if (back) back.addEventListener('click', function () {
       state.selectedDistrict = null;
@@ -226,6 +236,58 @@
       if (info) info.textContent = 'Click a district for details.';
       renderRightPanel();
     });
+  }
+
+  function cumulativeDaily(days) {
+    var out = [];
+    var c = { dem: 0, rep: 0, unaff: 0, total: 0 };
+    days.slice().sort(function (a, b) { return a.o - b.o; }).forEach(function (day) {
+      c.dem += day.d; c.rep += day.r; c.unaff += day.u; c.total += day.d + day.r + day.u + day.x;
+      out.push({ offset: day.o, dem: c.dem, rep: c.rep, unaff: c.unaff, total: c.total });
+    });
+    return out;
+  }
+
+  function renderDistrictChart(series) {
+    var el = document.getElementById('district-chart');
+    if (!el || !series.length) { if (el) el.innerHTML = ''; return; }
+    var xMin = series[0].offset, xMax = series[series.length - 1].offset;
+    xMax = Math.max(xMax, 0);
+    var yMax = series[series.length - 1].total;
+    // Round yMax up to a nice number.
+    var mag = Math.pow(10, Math.floor(Math.log10(yMax || 1)));
+    yMax = Math.ceil(yMax / mag) * mag;
+    if (yMax < 10) yMax = 10;
+
+    var W = 360, H = 200, m = { l: 40, r: 8, t: 8, b: 26 };
+    var iw = W - m.l - m.r, ih = H - m.t - m.b;
+    function X(o) { return m.l + (o - xMin) / (xMax - xMin || 1) * iw; }
+    function Y(v) { return m.t + ih - v / (yMax || 1) * ih; }
+
+    var svg = [];
+    // y grid
+    for (var i = 0; i <= 4; i++) {
+      var v = yMax / 4 * i;
+      svg.push('<line x1="' + m.l + '" y1="' + Y(v) + '" x2="' + (W - m.r) + '" y2="' + Y(v)
+        + '" stroke="' + (i === 0 ? '#cbd5e1' : '#eef2f7') + '" stroke-width="1"/>');
+      svg.push('<text x="' + (m.l - 5) + '" y="' + (Y(v) + 3) + '" text-anchor="end" class="axis">' + fmtAxis(v) + '</text>');
+    }
+    // x ticks every 14 days
+    for (var o = Math.ceil(xMin / 14) * 14; o <= xMax; o += 14) {
+      svg.push('<text x="' + X(o) + '" y="' + (H - m.b + 14) + '" text-anchor="middle" class="axis">' + (o === 0 ? '0' : o) + '</text>');
+    }
+    svg.push('<line x1="' + X(0) + '" y1="' + m.t + '" x2="' + X(0) + '" y2="' + (m.t + ih)
+      + '" stroke="#94a3b8" stroke-dasharray="3 3"/>');
+
+    function pathFor(key) {
+      return series.map(function (p, i) {
+        return (i === 0 ? 'M' : 'L') + X(p.offset).toFixed(1) + ',' + Y(p[key]).toFixed(1);
+      }).join(' ');
+    }
+    ['dem', 'rep', 'unaff'].forEach(function (key) {
+      svg.push('<path d="' + pathFor(key) + '" fill="none" stroke="' + COLORS[key] + '" stroke-width="2"/>');
+    });
+    el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;display:block">' + svg.join('') + '</svg>';
   }
 
   function showTooltip(e, id, d) {

@@ -103,11 +103,56 @@ function byDistrict(column) {
 }
 const statewide = query(`select ${PARTY_SUMS} from ${current.table}`)[0].map(Number);
 
+// Per-district, per-day ballot counts for the current election, for the
+// district trajectory chart. Windowed the same way as the daily aggregates.
+const from = addDays(current.date, -120);
+const to = addDays(current.date, 46);
+const electionDay = Date.parse(current.date + 'T00:00:00Z');
+const CHAMBER_COLUMNS = { us_house: 'CongDist', state_house: 'HouseDist', state_senate: 'SenDist', us_senate: null };
+const districtDaily = {};
+for (const [chamber, column] of Object.entries(CHAMBER_COLUMNS)) {
+  districtDaily[chamber] = {};
+  if (!column) {
+    // Statewide single district: aggregate the whole table by day.
+    const rows = query(`
+      select date(ElectionDate) as d, ${PARTY_SUMS}
+      from ${current.table}
+      where ElectionDate >= '${from}' and ElectionDate < '${to}'
+      group by d order by d
+    `);
+    const arr = rows.map(([d, dem, rep, unaff, other]) => ({
+      o: Math.round((Date.parse(d + 'T00:00:00Z') - electionDay) / 86400000),
+      d: +dem, r: +rep, u: +unaff, x: +other,
+    }));
+    districtDaily[chamber]['NC-SEN'] = arr;
+    continue;
+  }
+  const rows = query(`
+    select ${column} as dist, date(ElectionDate) as d, ${PARTY_SUMS}
+    from ${current.table}
+    where ${column} > 0
+      and ElectionDate >= '${from}' and ElectionDate < '${to}'
+    group by dist, d order by dist, d
+  `);
+  const pad2 = (n) => String(n).padStart(2, '0');
+  for (const [dist, d, dem, rep, unaff, other] of rows) {
+    const id = chamber === 'us_house' ? `NC-${pad2(Number(dist))}`
+      : chamber === 'state_house' ? `HD-${Number(dist)}`
+      : `SD-${pad2(Number(dist))}`;
+    if (!districtDaily[chamber][id]) districtDaily[chamber][id] = [];
+    districtDaily[chamber][id].push({
+      o: Math.round((Date.parse(d + 'T00:00:00Z') - electionDay) / 86400000),
+      d: +dem, r: +rep, u: +unaff, x: +other,
+    });
+  }
+}
+
 const payload = {
   generatedAt: new Date().toISOString(),
   source: 'Carolina Elections (carolinaelections.com) absentee files',
   currentId: CURRENT,
   elections,
+  districtDaily,
   chambers: {
     us_house: {
       label: 'U.S. House',

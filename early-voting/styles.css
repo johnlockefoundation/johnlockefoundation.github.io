@@ -173,3 +173,5 @@ input[type="search"]::placeholder{color:#94a3b8}
 .share-bar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:12px 0 14px;border:1px solid var(--line)}
 .share-seg{height:100%}
 .back-btn{margin-top:14px}
+.district-chart{margin-top:10px}
+.district-chart .axis{font-family:var(--font-body);font-size:10px;fill:#64748b}
