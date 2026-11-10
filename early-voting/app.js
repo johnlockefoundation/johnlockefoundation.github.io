@@ -11,9 +11,9 @@
   'use strict';
 
   var CHAMBERS = ['us_house', 'state_house', 'state_senate', 'us_senate'];
-  var COLORS = { dem: '#2563eb', rep: '#dc2626', unaff: '#94a3b8' };
-  var COMPARE_COLORS = ['#0f172a', '#64748b'];
-  var NEUTRAL = '#eef2f7';
+  var COLORS = { dem: '#4A76A8', rep: '#A85A5A', unaff: '#94a3b8' };
+  var COMPARE_COLORS = ['#475569', '#94a3b8'];
+  var NEUTRAL = '#F1F3F6';
   var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   var state = {
@@ -65,7 +65,7 @@
     var t = Math.max(-1, Math.min(1, v / state.domain));
     var m = Math.abs(t);
     var dark = t >= 0 ? COLORS.dem : COLORS.rep;
-    var light = t >= 0 ? '#93c5fd' : '#fca5a5';
+    var light = t >= 0 ? '#a8c0dc' : '#d9a8a8';
     return m <= 0.5 ? lerpColor(NEUTRAL, light, m * 2) : lerpColor(light, dark, (m - 0.5) * 2);
   }
 
@@ -154,7 +154,7 @@
       'Partisan lean of ballots recorded so far, by district (more Democratic vs. more Republican). '
       + state.data.chambers[chamber].districts.length + ' districts.';
 
-    var swatches = [COLORS.rep, '#fca5a5', NEUTRAL, '#93c5fd', COLORS.dem]
+    var swatches = [COLORS.rep, '#d9a8a8', NEUTRAL, '#a8c0dc', COLORS.dem]
       .map(function (c) { return '<span style="background:' + c + '"></span>'; }).join('');
     document.getElementById('legend').innerHTML = '<span>' + state.domain + ' more R</span>'
       + '<div class="swatches">' + swatches + '</div>'
@@ -500,6 +500,12 @@
     var latestDate = current.days[current.days.length - 1].date;
     document.getElementById('updated-line').textContent =
       'Ballots through ' + fmtDate(latestDate) + ' · Source: Carolina Elections';
+    var kpiTotal = current.days.reduce(function (a, r) { return a + r.dem + r.rep + r.unaff + r.other; }, 0);
+    var kpiDem = current.days.reduce(function (a, r) { return a + r.dem; }, 0);
+    var kpiRep = current.days.reduce(function (a, r) { return a + r.rep; }, 0);
+    document.getElementById('kpi-total').textContent = fmt(kpiTotal);
+    document.getElementById('kpi-dem').textContent = (kpiDem / kpiTotal * 100).toFixed(1) + '%';
+    document.getElementById('kpi-rep').textContent = (kpiRep / kpiTotal * 100).toFixed(1) + '%';
 
     renderChamberToggles();
     renderMap();

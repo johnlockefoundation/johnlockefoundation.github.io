@@ -24,6 +24,11 @@
     <p class="updated" id="updated-line"></p>
 
     <main id="app" hidden>
+      <section class="kpi-row" aria-label="Summary">
+        <div class="kpi"><span class="kpi-label">Ballots recorded</span><span class="kpi-value" id="kpi-total">—</span></div>
+        <div class="kpi"><span class="kpi-label">Democratic share</span><span class="kpi-value" id="kpi-dem">—</span></div>
+        <div class="kpi"><span class="kpi-label">Republican share</span><span class="kpi-value" id="kpi-rep">—</span></div>
+      </section>
       <div class="map-grid">
         <section class="panel map-wrap" aria-labelledby="map-title">
           <h2 id="map-title" class="panel-title">Ballots by district</h2>
@@ -47,9 +52,13 @@
       </div>
 
       <section class="methodology">
-        <h2>Methodology</h2>
-        <p>Figures come from the absentee files of the Carolina Elections database (carolinaelections.com), one row per ballot with the date the ballot activity was recorded. The map shows each district’s Democratic-minus-Republican share of ballots recorded so far in the 2026 general election, in percentage points; minor parties are counted in totals but not in the party split. Chamber toggles switch between U.S. House, NC House, NC Senate and the statewide U.S. Senate view.</p>
-        <p>The trajectory chart cumulates ballots by day, aligned across elections by days before election day. The current election is split by party; comparison elections are drawn as single dashed totals, which include minor parties. The 2016 absentee file is empty and is not offered. A recorded ballot is not necessarily a returned or counted vote, and the parties do not return ballots at equal rates — the partisan split is not a forecast.</p>
+        <details>
+          <summary>Methodology &amp; notes</summary>
+          <div class="methodology-body">
+            <p>Figures come from the absentee files of the Carolina Elections database (carolinaelections.com), one row per ballot with the date the ballot activity was recorded. The map shows each district’s partisan lean of ballots recorded so far in the 2026 general election; minor parties are counted in totals but not in the party split. Chamber toggles switch between U.S. House, NC House, NC Senate and the statewide U.S. Senate view.</p>
+            <p>The trajectory chart cumulates ballots by day, aligned across elections by days before election day. The current election is split by party; comparison elections are drawn as single dashed totals, which include minor parties. The 2016 absentee file is empty and is not offered. A recorded ballot is not necessarily a returned or counted vote, and the parties do not return ballots at equal rates — the partisan split is not a forecast.</p>
+          </div>
+        </details>
       </section>
     </main>
 
